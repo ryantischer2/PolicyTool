@@ -1,0 +1,20 @@
+    '''<!-- Display policy if available -->
+    {% if policies %}
+        <h3>Policy:</h3>
+        #<p>{{ policies }}</p>
+    {% endif %}'''
+
+
+
+    '''@app.route('/save_policy', methods=['POST'])
+def save_policy():
+    # Extract policy data from the request
+    # For example, if you're sending policy ID:
+    # policy_id = request.form['policy_id']
+    # policy = fetch_policy_by_id(policy_id)  # Implement this function based on your application logic
+
+    # For demonstration, let's assume 'policy' is a dictionary
+    policy = {"name": "Example Policy", "details": "Details of the policy"}
+
+    save_policy_to_mongodb(policy)
+    return redirect(url_for('index'))'''

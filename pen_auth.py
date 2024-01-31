@@ -1,4 +1,4 @@
-# Copyright (c) 2020, Pensando Systems
+# Copyright (c) 2024, AMD
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -11,49 +11,37 @@
 # WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-# Author: Ryan Tischer ryan@pensando.io
-
+# Author: Ryan Tischer ryan.tischer@amd.com
 
 import requests
 import json
-import pen_auth, pen
 
 #get rid of insecure warnings -
 from urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 
-
-def psm_login (psm_ip, username, password, tenant):
+def psm_login (psm_ip, username, password):
 
     auth_data = {
         "username": username,
         "password": password,
-        "tenant": tenant
+        "tenant": "default"
     }
-    data_to_send = json.dumps(auth_data).encode("utf-8")
+
+    data_to_send = json.dumps(auth_data)
 
     #Create session for PSM
+    
+    headers = {'Content-Type': 'application/json'}
 
     session = requests.Session()
     session.verify = False
 
     #working
-    URL = psm_ip + 'v1/login'
-
-    auth = session.post(URL, data_to_send)
-
+    URL = 'https://' + psm_ip + '/v1/login'
+ 
+    auth = session.post(URL, data_to_send, headers=headers)
+    
     return session
 
-#static PSM vars.  Uncomment to use
 
-PSM_IP = 'https://10.29.75.21/'
-PSM_TENANT = 'default'
-PSM_USERNAME = "admin"
-PSM_PASSWD = 'admin'
-
-
-session = pen_auth.psm_login(PSM_IP, PSM_USERNAME, PSM_PASSWD, PSM_TENANT)
-#session is used to authenicate future API calls to PSM.
-
-# Get PSM security policies 
-print(pen.get_networksecuritypolicy(PSM_IP, session))

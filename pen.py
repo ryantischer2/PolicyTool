@@ -1,4 +1,4 @@
-# Copyright (c) 2020, Pensando Systems
+# Copyright (c) 2024, AMD
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -11,10 +11,12 @@
 # WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-# Author: Ryan Tischer ryan@pensando.io
+# Author: Ryan Tischer ryan.tischer@amd.com
 
+# Note Some of are untested with DSS PSM
 
 import json
+import requests
 
 def get_web_call(url, session, *payload):
 
@@ -73,18 +75,12 @@ def get_flow_export_policy(psm_ip, session):
     url = psm_ip + 'configs/monitoring/v1/flowExportPolicy'
     return get_web_call(url, session).json()
 
-def get_dsc(psm_ip, session):
+def get_dss(psm_ip, session):
 
-    url = psm_ip + 'configs/cluster/v1/distributedservicecards'
+    url = psm_ip + '/configs/cluster/v1/distributedserviceentities'
     dsc = get_web_call(url, session).json()
 
-    # pull out mac address of DSCs
-    num_dsc = (dsc['list-meta']['total-count'])
-    dsc_list = []
-
-    for dscs in range(num_dsc):
-        dsc_list.append((dsc['items'][dscs]['meta']['name']))
-    return dsc, dsc_list
+    return dsc
 
 def get_config_snapshot(psm_ip, session):
     url = psm_ip + '/configs/cluster/v1/config-snapshot'
@@ -94,20 +90,16 @@ def get_node1(psm_ip, session):
     url = psm_ip + '/configs/cluster/v1/nodes/node1'
     return get_web_call(url, session).json()
 
-def get_alertpolices(psm_ip, session, tenant):
-    url = psm_ip + '/configs/monitoring/v1/watch/tenant/{t}/alertPolicies'.format(t=tenant)
+def get_networksecuritypolicy(psm_ip, session,):
+    url = psm_ip + '/configs/security/v1/networksecuritypolicies'
     return get_web_call(url, session).json()
 
-def get_networksecuritypolicy(psm_ip, session, tenant):
-    url = psm_ip + '/configs/security/v1/{t}/default/networksecuritypolicies'.format(t=tenant)
+def get_Specificpolicy(psm_ip, session, policyName):
+    url = psm_ip + '/configs/security/v1/networksecuritypolicies/' + policyName
     return get_web_call(url, session).json()
 
 def get_users(psm_ip, session, tenant):
     url = psm_ip + '/configs/auth/v1/tenant/{t}/users'.format(t=tenant)
-    return get_web_call(url, session).json()
-
-def get_images(psm_ip, session):
-    url = psm_ip + '/objstore/v1/tenant/default/images/objects'
     return get_web_call(url, session).json()
 
 def get_psm_metrics(psm_ip, session, psm_tenant, st, et):
